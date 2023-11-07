@@ -23,11 +23,48 @@ const client = new MongoClient(uri, {
     deprecationErrors: true,
   }
 });
+//tourGuide
 
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    //await client.connect();
+    await client.connect();
+
+    const serviceCollection = client.db('tourGuide').collection('services')
+
+
+    //read services
+    app.get('/services', async(req,res)=>{
+      try{
+        const cursor = serviceCollection.find()
+        const result = await cursor.toArray()
+        res.send(result)
+
+      }
+      catch(error){
+        console.log(error);
+      }
+    })
+   //add services
+   
+   app.post('/services',async(req,res)=>{
+    try{
+      const newService = req.body
+      const result = await serviceCollection.insertOne(newService)
+      res.send(result)
+
+    }
+    catch (error) {
+      console.log(error);
+
+    }
+   })
+
+    // app.get('/services', async(req,res)=>{
+    //     const cursor = serviceCollection.find();
+    //     const result= await cursor.toArray()
+    //     res.send(result)
+    // })
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
