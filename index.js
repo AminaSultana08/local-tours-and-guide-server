@@ -61,7 +61,7 @@ async function run() {
         const options = {
          
           // Include only the `title` and `imdb` fields in the returned document
-          projection: { address: 1,description:1,email:1,photo:1,price:1 , providerName:1,serviceName:1 },
+          projection: { address: 1,description:1,email:1,photo:1,price:1 ,providerPhoto:1,providerName:1,serviceName:1 },
         };
     
         const result = await serviceCollection.findOne(query,options)
@@ -96,7 +96,6 @@ async function run() {
       if(req.query?.email){
         query = {email : req.query.email}
       }
-
       const result = await bookingCollection.find(query).toArray()
       res.send(result)
     }
@@ -114,6 +113,20 @@ async function run() {
       res.send(result)
     }
     catch(error) {
+      console.log(error);
+    }
+   })
+
+   //delete booking
+
+   app.delete('/bookings/:id',async(req,res)=>{
+    try{
+      const id = req.params.id
+      const query ={_id: new ObjectId(id) }
+      const result = await bookingCollection.deleteOne(query)
+      res.send(result)
+    }
+    catch(error){
       console.log(error);
     }
    })
