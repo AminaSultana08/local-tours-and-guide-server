@@ -88,6 +88,60 @@ async function run() {
     }
    })
 
+   //update services
+   app.get('/services/:id', async(req,res)=>{
+    try{
+      const id = req.params.id
+      const query = {_id: new ObjectId(id)}
+      const result = await serviceCollection.findOne(query)
+      res.send(result)
+    }
+    catch(error){
+      console.log(error);
+    }
+   })
+
+   app.put('/services/:id', async(req,res)=>{
+    try{
+      const id = req.params.id
+      const filter = {_id : new ObjectId(id)}
+      const options = { upsert: true };
+      const updatedService = req.body;
+      const service = {
+        $set:{
+          serviceName:updatedService.serviceName,
+          photo:updatedService.photo,
+          providerName:updatedService.providerName,
+          providerPhoto:updatedService.providerPhoto,
+          email:updatedService.email,
+          address:updatedService.address,
+          price:updatedService.price,
+          description:updatedService.description,
+        }
+      }
+      const result= await serviceCollection.updateOne(filter,service,options)
+      res.send(result)
+
+    }
+    catch(error){
+      console.log(error);
+    }
+   })
+
+   //delete service
+
+   app.delete('/services/:id',async(req,res)=>{
+    try{
+      const id = req.params.id
+      const query ={_id: new ObjectId(id) }
+      const result = await serviceCollection.deleteOne(query)
+      res.send(result)
+    }
+    catch(error){
+      console.log(error);
+    }
+   })
+
    //bookings
    app.get('/bookings',async(req,res)=>{
     try{
@@ -105,6 +159,7 @@ async function run() {
    })
 
 
+
    app.post('/bookings', async(req,res)=>{
     try{
       const booking = req.body
@@ -117,25 +172,9 @@ async function run() {
     }
    })
 
-   //delete booking
+   
 
-   app.delete('/bookings/:id',async(req,res)=>{
-    try{
-      const id = req.params.id
-      const query ={_id: new ObjectId(id) }
-      const result = await bookingCollection.deleteOne(query)
-      res.send(result)
-    }
-    catch(error){
-      console.log(error);
-    }
-   })
-
-    // app.get('/services', async(req,res)=>{
-    //     const cursor = serviceCollection.find();
-    //     const result= await cursor.toArray()
-    //     res.send(result)
-    // })
+    
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
