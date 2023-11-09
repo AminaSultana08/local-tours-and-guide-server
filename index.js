@@ -88,6 +88,36 @@ async function run() {
     }
    })
 
+   //bookings
+   app.get('/bookings',async(req,res)=>{
+    try{
+      console.log(req.query.email);
+      let query ={};
+      if(req.query?.email){
+        query = {email : req.query.email}
+      }
+
+      const result = await bookingCollection.find(query).toArray()
+      res.send(result)
+    }
+    catch(error){
+      console.log(error);
+    }
+   })
+
+
+   app.post('/bookings', async(req,res)=>{
+    try{
+      const booking = req.body
+      console.log(booking);
+      const result = await bookingCollection.insertOne(booking)
+      res.send(result)
+    }
+    catch(error) {
+      console.log(error);
+    }
+   })
+
     // app.get('/services', async(req,res)=>{
     //     const cursor = serviceCollection.find();
     //     const result= await cursor.toArray()
